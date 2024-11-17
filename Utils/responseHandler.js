@@ -1,0 +1,75 @@
+const sendResponse = (res, statusCode, data,) => {
+    switch (statusCode) {
+        case 200:
+            return res.status(statusCode).json({
+                success: true,
+                message: "Retrieval Successful!",
+                data,
+            });
+        case 201:
+            return res.status(statusCode).json({
+                success: true,
+                message: "Insertion Successful!",
+            });
+        case 400:
+            if (data) {
+                return res.status(statusCode).json({
+                    success: false,
+                    message: "Bad Request!",
+                    error: data,
+                    errorCode: 'BAD_REQUEST'
+                });
+            } else {
+                return res.status(statusCode).json({
+                    success: false,
+                    message: "Bad Request!",
+                    errorCode: 'BAD_REQUEST'
+                });
+            }
+        case 401:
+            return res.status(statusCode).json({
+                success: false,
+                message: "Please Login to Access Resources!",
+            });
+        case 403:
+            return res.status(statusCode).json({
+                success: false,
+                message: "User Forbidden!",
+            });
+        case 404:
+            return res.status(statusCode).json({
+                success: false,
+                message: "Data Not Found!",
+            });
+        case 405:
+            return res.status(statusCode).json({
+                success: false,
+                message: "Invalid Password!",
+            });
+        case 500:
+            return res.status(statusCode).json({
+                success: false,
+                message: "Internal Server Error!",
+                error: data.message,
+            });
+        case 600:
+            return res.status(statusCode).json({
+                success: false,
+                message: data,
+            });
+        default:
+            let success = false;
+            if (data.status >= 200 && data.status <= 299) success = true;
+            if (data.status >= 400 && data.status <= 499) success = false;
+            if (data.status >= 500 && data.status <= 599) success = false;
+
+            return res.status(data.status).json({
+                success,
+                message: data.statusText,
+            });
+    }
+};
+
+module.exports = {
+    sendResponse,
+};
